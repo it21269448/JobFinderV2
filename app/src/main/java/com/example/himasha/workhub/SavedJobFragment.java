@@ -81,8 +81,7 @@ public class SavedJobFragment extends Fragment {
                 viewHolder.mview.findViewById(R.id.remove_btn).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DatabaseReference jobRef = workhub.child(job_key);
-                        model.setIsSaved("0");
+                        workhub.child(job_key).removeValue();
                         notifyItemRemoved(position);
 
                         Toast.makeText(v.getContext(), "Job removed", Toast.LENGTH_SHORT).show();

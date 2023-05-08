@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,14 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class SavedJobFragment extends Fragment {
     FloatingActionButton actionButton;
     RecyclerView job_list;
     DatabaseReference workhub;
+
+    private Button removeJob;
+
     public static SavedJobFragment newInstance() {
         SavedJobFragment fragment = new SavedJobFragment();
         return fragment;
@@ -35,6 +44,7 @@ public class SavedJobFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_saved_job, container, false);
+
         initViews(view);
         return view;
     }
@@ -45,14 +55,15 @@ public class SavedJobFragment extends Fragment {
 
         FirebaseRecyclerAdapter<Job,JobViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Job, JobViewHolder>(
                 Job.class,
-                R.layout.job_row,
+                R.layout.saved_job_row,
                 JobViewHolder.class,
-                workhub
+                workhub.orderByChild("isSaved").equalTo("1")
 
         ) {
             @Override
             protected void populateViewHolder(JobViewHolder viewHolder, Job model, int position) {
                 final String job_key = getRef(position).getKey();
+                viewHolder.setKey(job_key);
                 viewHolder.setJobName(model.getJobName());
                 viewHolder.setJobBudget(model.getJobBudget());
                 viewHolder.setJobLocation(model.getJobLocationName());
@@ -66,6 +77,17 @@ public class SavedJobFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+
+                viewHolder.mview.findViewById(R.id.remove_btn).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DatabaseReference jobRef = workhub.child(job_key);
+                        model.setIsSaved("0");
+                        notifyItemRemoved(position);
+
+                        Toast.makeText(v.getContext(), "Job removed", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         };
         job_list.setAdapter(firebaseRecyclerAdapter);
@@ -74,12 +96,17 @@ public class SavedJobFragment extends Fragment {
     public static class JobViewHolder extends RecyclerView.ViewHolder{
 
         View mview;
+        String key;
+
         public JobViewHolder(View itemView) {
             super(itemView);
 
             mview = itemView;
         }
 
+        public void setKey(String key){
+            this.key = key;
+        }
         public void setJobName(String jobname){
             TextView jName = (TextView) mview.findViewById(R.id.jobrowname);
             jName.setText(jobname);
@@ -102,8 +129,7 @@ public class SavedJobFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        workhub = FirebaseDatabase.getInstance().getReference().child("saved_jobs");
-        workhub.keepSynced(true);
+        workhub = FirebaseDatabase.getInstance().getReference().child("jobs");
 
         job_list = (RecyclerView)view.findViewById(R.id.job_list);
         job_list.setHasFixedSize(true);

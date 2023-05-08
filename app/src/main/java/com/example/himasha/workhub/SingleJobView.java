@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +50,7 @@ public class SingleJobView extends AppCompatActivity {
 
     private DatabaseReference workhubUsers;
     private DatabaseReference workhubJobs;
+    private DatabaseReference workhubSavedJobs;
     private DatabaseReference workhubsuges;
     private FirebaseAuth auth;
 
@@ -72,6 +74,7 @@ public class SingleJobView extends AppCompatActivity {
         job_key = getIntent().getExtras().getString("job_id");
         auth = FirebaseAuth.getInstance();
         workhubJobs = FirebaseDatabase.getInstance().getReference().child("jobs");
+        workhubSavedJobs = FirebaseDatabase.getInstance().getReference().child("saved_jobs");
         workhubUsers = FirebaseDatabase.getInstance().getReference().child("users");
 
         builder = new AlertDialog.Builder(this);
@@ -227,13 +230,17 @@ public class SingleJobView extends AppCompatActivity {
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        if(job_key != null) {
-                            workhubJobs.child("saved_jobs").push();
+                        workhubJobs.child(job_key).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                dataSnapshot.getRef().child("isSaved").setValue("1");
+                            }
 
-                            Intent intent2 = new Intent(SingleJobView.this, FeedActivity.class);
-                            startActivity(intent2);
-                            finish();
-                        }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
 
                         dialog.dismiss();
                     }

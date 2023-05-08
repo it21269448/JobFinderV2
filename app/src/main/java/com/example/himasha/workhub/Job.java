@@ -16,8 +16,24 @@ public class Job {
     private String jobKeyWord;
     private Double jobLocationLong;
     private Double jobLocationLat;
+    private String isSaved;
 
     public Job() {
+    }
+
+    public Job(String jobName, String jobDesc, String jobBudget, String jobLocationName, String jobPostedDate, String jobPostedUserId, String jobPostedUserName, String jobStatus, String jobKeyWord, Double jobLocationLong, Double jobLocationLat, String isSaved) {
+        this.jobName = jobName;
+        this.jobDesc = jobDesc;
+        this.jobBudget = jobBudget;
+        this.jobLocationName = jobLocationName;
+        this.jobPostedDate = jobPostedDate;
+        this.jobPostedUserId = jobPostedUserId;
+        this.jobPostedUserName = jobPostedUserName;
+        this.jobStatus = jobStatus;
+        this.jobKeyWord = jobKeyWord;
+        this.jobLocationLong = jobLocationLong;
+        this.jobLocationLat = jobLocationLat;
+        this.isSaved = isSaved;
     }
 
     public Job(String jobName, String jobDesc, String jobBudget, String jobLocationName, String jobPostedDate, String jobPostedUserId, String jobPostedUserName, String jobStatus, String jobKeyWord, Double jobLocationLong, Double jobLocationLat) {
@@ -33,7 +49,6 @@ public class Job {
         this.jobLocationLong = jobLocationLong;
         this.jobLocationLat = jobLocationLat;
     }
-
     public String getJobName() {
         return jobName;
     }
@@ -120,5 +135,13 @@ public class Job {
 
     public void setJobLocationLat(Double jobLocationLat) {
         this.jobLocationLat = jobLocationLat;
+    }
+
+    public String getIsSaved() {
+        return isSaved;
+    }
+
+    public void setIsSaved(String isSaved) {
+        this.isSaved = isSaved;
     }
 }

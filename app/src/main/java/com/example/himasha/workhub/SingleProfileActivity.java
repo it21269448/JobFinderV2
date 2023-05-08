@@ -176,8 +176,18 @@ public class SingleProfileActivity extends AppCompatActivity {
         ) {
             @Override
             protected void populateViewHolder(ReviewViewHolder viewHolder, Review model, int position) {
+                final String job_key = getRef(position).getKey();
                 viewHolder.setReview(model.getReview());
                 viewHolder.setReviewUser(model.getReviewedUserName());
+
+                viewHolder.mview.findViewById(R.id.deleteButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String reviewId = getRef(position).getKey();
+                        workhubUsers.child(user_key).child("reviews").child(reviewId).removeValue();
+                        Toast.makeText(SingleProfileActivity.this, "Review deleted", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         };
         review_list.setAdapter(firebaseRecyclerAdapter);

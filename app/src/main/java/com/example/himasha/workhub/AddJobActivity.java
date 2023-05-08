@@ -156,7 +156,7 @@ public class AddJobActivity extends AppCompatActivity {
                             newJob.setJobPostedDate(jdate);
                             newJob.setJobPostedUserId(juid);
                             newJob.setJobKeyWord(skill);
-                            newJob.setJobPostedUserName(userName);
+                            newJob.setJobPostedUserName(auth.getCurrentUser().getEmail());
                             newJob.setJobStatus("Available");
 
                             workhub.child(jobId).setValue(newJob);
